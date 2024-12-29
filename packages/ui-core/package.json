@@ -1,0 +1,17 @@
+{
+  "name": "@imnull/ui-core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc src/index.ts -t esnext -m commonjs -d --moduleResolution node10 --outDir dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
