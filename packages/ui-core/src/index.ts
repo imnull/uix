@@ -74,3 +74,14 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
 
     return R
 }
+
+export const calDampingOffset = (dOffset: number, size: number, limit: number, threshold: number, damping: number) => {
+    const abs = Math.abs(dOffset)
+    const sign = Math.sign(dOffset)
+    let offset = abs
+    if(offset > size * threshold) {
+        offset = size * threshold + ((abs - size * threshold) * damping)
+    }
+    offset = Math.min(size * limit, offset)
+    return offset * sign
+}

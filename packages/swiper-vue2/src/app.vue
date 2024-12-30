@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Swiper VUE2</h1>
-        <Swiper />
+        <Swiper :list="['a', 'b', 'c', 1, 2, 3]" />
     </div>
 </template>
 <script lang="js">

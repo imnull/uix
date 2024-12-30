@@ -2,20 +2,34 @@
     <div ref="wrapper" class="swiper-wrapper" :style="wrapperCssText">
         <div class="list-wrapper">
             <div ref="list" class="list" :style="listCssText">
-                <div class="item">1</div>
-                <div class="item">2</div>
-                <div class="item">3</div>
+                <div class="item" v-for="(item, index) in list" :key="index">{{ item }}</div>
             </div>
         </div>
     </div>
 </template>
 <script lang="js">
-import { initGestureEvents } from '@imnull/ui-core'
+import { initGestureEvents, calDampingOffset } from '@imnull/ui-core'
 export default {
     props: {
+        list: {
+            type: Array,
+            default: [],
+        },
         transitionDuration: {
             type: Number,
-            default: 300,
+            default: 200,
+        },
+        threshold: {
+            type: Number,
+            default: 0.2,
+        },
+        damping: {
+            type: Number,
+            default: 0.2,
+        },
+        offsetLimit: {
+            type: Number,
+            default: 0.5
         }
     },
     computed: {
@@ -44,17 +58,24 @@ export default {
             if(!wrapper || !list) {
                 return
             }
+            const { width } = wrapper.getBoundingClientRect()
             this.handler = initGestureEvents(wrapper, {
                 onStart: () => {
                     this.manual = true
                 },
                 onEnd: () => {
+                    const sign = Math.sign(this.offset)
+                    const step = -sign
+                    const abs = Math.abs(this.offset)
                     this.manual = false
                     this.offset = 0
+                    if(abs > width * this.threshold) {
+                        this.currentIndex = Math.max(0, Math.min(this.list.length - 1, this.currentIndex + step))
+                        this.position = -this.currentIndex * width
+                    }
                 },
                 onMove: (point) => {
-                    console.log(11111, point)
-                    this.offset = point.x
+                    this.offset = calDampingOffset(point.x, width, this.offsetLimit, this.threshold, this.damping)
                 }
             })
             this.handler.init()
@@ -78,7 +99,6 @@ export default {
     width: 100vw;
     height: 100vw;
     box-sizing: border-box;
-    border: 2px solid #000;
     overflow: hidden;
     position: relative;
     .list-wrapper {
@@ -93,6 +113,7 @@ export default {
                 width: 100vw;
                 height: 100vw;
                 border: 2px solid #f00;
+                box-sizing: border-box;
                 flex-shrink: 0;
             }
         }
