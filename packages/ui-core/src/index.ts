@@ -20,8 +20,12 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         onEnd,
     } = options
     let point: TPoint | null = null
+    let locked = false
     const pointerdown = createEventBinder(el, 'pointerdown', e => {
         setEventSilence(e)
+        if(locked) {
+            return
+        }
         if(typeof onStart === 'function') {
             onStart()
         }
@@ -60,6 +64,10 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
     const contextmenu = createEventBinder(el, 'contextmenu', setEventSilence)
 
     const R = {
+        lock: (status: boolean) {
+            locked = status
+            return R
+        },
         init: () => {
             pointerdown.attach()
             contextmenu.attach()
