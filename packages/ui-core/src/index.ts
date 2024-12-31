@@ -64,7 +64,7 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
     const contextmenu = createEventBinder(el, 'contextmenu', setEventSilence)
 
     const R = {
-        lock: (status: boolean) {
+        lock: (status: boolean) => {
             locked = status
             return R
         },
