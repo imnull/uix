@@ -5,13 +5,13 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const PxToViewport = require('postcss-px-to-viewport')
 
 module.exports = options => {
-    const { WEBPACK_SERVE } = options
+    const { WEBPACK_SERVE, DOC } = options
     return {
         mode: WEBPACK_SERVE ? 'development' : 'production',
         entry: './src/index.ts',
         // 输出配置
         output: {
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, DOC ? '../../docs/swiper-vue2' : 'dist'),
             filename: 'main.js',
         },
         // 模块规则
