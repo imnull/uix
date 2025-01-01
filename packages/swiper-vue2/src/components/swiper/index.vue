@@ -216,22 +216,24 @@ export default {
                 }
             })
             list.addEventListener('transitionend', e => {
-                if(this.circular) {
-                    this.manual = true
-                    this.position = 0
-                    this.initShadowList()
-                }
+                this.$nextTick(() => {
+                    if(this.circular) {
+                        this.manual = true
+                        this.position = 0
+                        this.initShadowList()
+                    }
 
-                const changed = this.oldCureentIndex !== this.currentIndex
-                this.oldCureentIndex = this.currentIndex
-                handler.lock(false)
+                    const changed = this.oldCureentIndex !== this.currentIndex
+                    this.oldCureentIndex = this.currentIndex
+                    handler.lock(false)
 
-                if(changed) {
-                    const index = this.currentIndex
-                    const value = this.list[index]
-                    this.$emit('change', { value, index })
-                }
-                this.play()
+                    if(changed) {
+                        const index = this.currentIndex
+                        const value = this.list[index]
+                        this.$emit('change', { value, index })
+                    }
+                    this.play()
+                })
             })
             list.addEventListener('transitionstart', e => {
                 handler.lock(true)
