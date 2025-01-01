@@ -63,7 +63,7 @@ export default {
         },
         transitionDuration: {
             type: Number,
-            default: 300,
+            default: 200,
         },
         threshold: {
             type: Number,
