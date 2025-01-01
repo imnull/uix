@@ -102,3 +102,5 @@ export {
 }
 
 export { rpxToPx, rpxToVw, getEventNames, TEventNames } from './utils'
+
+export { runAnimate } from './animate'

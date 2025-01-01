@@ -1,26 +1,43 @@
 <template>
-    <div ref="wrapper" class="swiper-wrapper" :style="wrapperCssText">
-        <div :class="['list-wrapper', direction, { circular }]" :style="boxSizeCssText">
-            <div ref="list" :class="['list', { ani: !manual }]" :style="listCssText">
-                <div
-                    class="item"
-                    v-for="(item, index) in shadowList"
-                    :style="getItemCssText(index)"
-                    :key="index"
-                >
-                    <ItemDemo v-if="!hasSlot('item')" :value="item.value" :index="item.index" />
-                    <slot name="item" :value="item.value" :index="item.index" />
-                </div>
-            </div>
+  <div ref="wrapper" class="swiper-wrapper" :style="wrapperCssText">
+    <div
+      :class="['list-wrapper', direction, { circular }]"
+      :style="boxSizeCssText"
+    >
+      <div ref="list" :class="['list', { ani: !manual }]" :style="listCssText">
+        <div
+          class="item"
+          v-for="(item, index) in shadowList"
+          :style="getItemCssText(index)"
+          :key="index"
+        >
+          <ItemDemo
+            v-if="!hasSlot('item')"
+            :value="item.value"
+            :index="item.index"
+          />
+          <slot name="item" :value="item.value" :index="item.index" />
         </div>
-        <div :class="['bottom-wrapper', direction]">
-            <DotsDemo v-if="!hasSlot('dots') && useDots" :count="list.length" :current="currentIndex" :direction="direction" />
-            <slot name="dots" :count="list.length" :current="currentIndex" :direction="direction" />
-        </div>
+      </div>
     </div>
+    <div :class="['bottom-wrapper', direction]">
+      <DotsDemo
+        v-if="!hasSlot('dots') && useDots"
+        :count="list.length"
+        :current="currentIndex"
+        :direction="direction"
+      />
+      <slot
+        name="dots"
+        :count="list.length"
+        :current="currentIndex"
+        :direction="direction"
+      />
+    </div>
+  </div>
 </template>
 <script lang="js">
-import { initGestureEvents, calDampingOffset, rpxToVw } from '@imnull/ui-core'
+import { initGestureEvents, calDampingOffset, rpxToVw, runAnimate } from '@imnull/ui-core'
 import ItemDemo from './item-demo.vue'
 import DotsDemo from './dots-demo.vue'
 
@@ -63,7 +80,7 @@ export default {
         },
         transitionDuration: {
             type: Number,
-            default: 200,
+            default: 150,
         },
         threshold: {
             type: Number,
@@ -160,6 +177,47 @@ export default {
                 }
             }
         },
+        animateGo(step) {
+            const currentIndex = this.getStepIndex(step)
+            this.oldCureentIndex = this.currentIndex
+            this.currentIndex = currentIndex
+            const size = this.size
+            const start = this.position + this.offset
+            let end = start
+            if(this.circular) {
+                const sign = -Math.sign(step)
+                end = sign * size
+            } else {
+                end = -currentIndex * size
+            }
+            const distande = end - start
+            this.manual = false
+            this.offset = false
+            runAnimate({
+                duration: this.transitionDuration,
+                onProgress: params => {
+                    this.position = distande * params.progress + start
+                },
+                onEnd: () => {
+                    if(this.circular) {
+                        this.manual = true
+                        this.position = 0
+                        this.initShadowList()
+                        }
+                        const changed = this.oldCureentIndex !== this.currentIndex
+                        this.oldCureentIndex = this.currentIndex
+                        if(this.handler) {
+                            this.handler.lock(false)
+                        }
+                        if(changed) {
+                            const index = this.currentIndex
+                            const value = this.list[index]
+                            this.$emit('change', { value, index })
+                        }
+                        this.play()
+                    }
+                })
+        },
         play() {
             this.stop()
             if(!this.autoplay) {
@@ -196,12 +254,13 @@ export default {
                     const sign = Math.sign(this.offset)
                     const step = -sign
                     const abs = Math.abs(this.offset)
-                    this.manual = false
                     const offsetRatio = Math.abs(this.offset) / size
-                    this.offset = 0
+                    // this.offset = 0
+                    this.manual = false
                     if(abs > size * this.threshold) {
-                        this.go(step)
+                        this.animateGo(step)
                     } else {
+                        this.animateGo(0)
                         if(offsetRatio < this.tapRatio) {
                             const index = this.currentIndex
                             const value = this.list[index]
@@ -260,66 +319,66 @@ export default {
 </script>
 <style lang="scss" scoped>
 .swiper-wrapper {
-    width: 100vw;
-    height: 100vw;
-    box-sizing: border-box;
-    overflow: hidden;
+  width: 100vw;
+  height: 100vw;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  perspective: 800px;
+  will-change: transform;
+  .list-wrapper {
     position: relative;
-    user-select: none;
-    perspective: 800px;
-    will-change: transform;
-    .list-wrapper {
+    overflow: visible;
+    &.circular {
+      transform: translateZ(0px) translateX(-100%);
+    }
+    .list {
+      will-change: transform;
+      display: flex;
+      flex-direction: row;
+      perspective: 0;
+      &.ani {
+        // transition: transform 0.2s;
+      }
+      .item {
+        display: block;
         position: relative;
-        overflow: visible;
-        &.circular {
-            transform: translateZ(0px) translateX(-100%);
-        }
-        .list {
-            will-change: transform;
-            display: flex;
-            flex-direction: row;
-            perspective: 0;
-            &.ani {
-                transition: transform 0.2s;
-            }
-            .item {
-                display: block;
-                position: relative;
-                box-sizing: border-box;
-                flex-shrink: 0;
-                text-align: center;
-                overflow: hidden;
-            }
-        }
-        &.vertical {
-            &.circular {
-                transform: translateY(-100%);
-            }
-            .list {
-                flex-direction: column;
-            }
-        }
-    }
-    .bottom-wrapper {
-        position: absolute;
-        z-index: 5;
-        width: 100%;
         box-sizing: border-box;
-        bottom: 0;
-        left: 0;
-        right: auto;
-        top: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        &.vertical {
-            width: auto;
-            height: 100%;
-            bottom: auto;
-            left: auto;
-            right: 0;
-            top: 0;
-        }
+        flex-shrink: 0;
+        text-align: center;
+        overflow: hidden;
+      }
     }
+    &.vertical {
+      &.circular {
+        transform: translateY(-100%);
+      }
+      .list {
+        flex-direction: column;
+      }
+    }
+  }
+  .bottom-wrapper {
+    position: absolute;
+    z-index: 5;
+    width: 100%;
+    box-sizing: border-box;
+    bottom: 0;
+    left: 0;
+    right: auto;
+    top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &.vertical {
+      width: auto;
+      height: 100%;
+      bottom: auto;
+      left: auto;
+      right: 0;
+      top: 0;
+    }
+  }
 }
 </style>
