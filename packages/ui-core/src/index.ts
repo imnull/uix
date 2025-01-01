@@ -93,3 +93,12 @@ export const calDampingOffset = (dOffset: number, size: number, limit: number, t
     offset = Math.min(size * limit, offset)
     return offset * sign
 }
+
+export {
+    getEventPoint,
+    createEventBinder,
+    setEventSilence,
+    TPoint,
+}
+
+export { rpxToPx, rpxToVw, getEventNames, TEventNames } from './utils'

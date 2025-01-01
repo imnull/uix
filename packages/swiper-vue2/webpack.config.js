@@ -2,7 +2,7 @@ const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-// const CopyWebpackPlugin = require('copy-webpack-plugin')
+const PxToViewport = require('postcss-px-to-viewport')
 
 module.exports = options => {
     const { WEBPACK_SERVE } = options
@@ -34,6 +34,24 @@ module.exports = options => {
                     use: [
                         'style-loader',
                         'css-loader',
+                        {
+                            loader: 'postcss-loader',
+                            options: {
+                                postcssOptions: {
+                                    plugins: [
+                                        PxToViewport({
+                                            viewportWidth: 750, // 设计稿宽度
+                                            unitPrecision: 5,   // 转换精度
+                                            viewportUnit: 'vw', // 转换后的单位
+                                            selectorBlackList: ['.ignore', '.hairlines'], // 忽略转换的类
+                                            minPixelValue: 1,   // 小于等于1px的值不转换
+                                            mediaQuery: false,   // 不转换媒体查询中的px
+                                            unitToConvert: 'rpx',
+                                        })
+                                    ]
+                                }
+                            }
+                        },
                         'sass-loader'
                     ]
                 },

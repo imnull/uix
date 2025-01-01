@@ -78,3 +78,10 @@ export const setEventSilence = (e: unknown) => {
         e.preventDefault()
     }
 }
+
+export const rpxToVw = (rpx: number, baseRpx = 750) => {
+    return (rpx * 100 / baseRpx) + 'vw'
+}
+export const rpxToPx = (rpx: number, baseRpx = 750) => {
+    return (rpx * window.innerWidth / baseRpx) + 'px'
+}
