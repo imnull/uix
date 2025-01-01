@@ -1,7 +1,7 @@
 <template>
     <div ref="wrapper" class="swiper-wrapper" :style="wrapperCssText">
         <div :class="['list-wrapper', direction, { circular }]" :style="boxSizeCssText">
-            <div ref="list" class="list" :style="listCssText">
+            <div ref="list" :class="['list', { ani: !manual }]" :style="listCssText">
                 <div
                     class="item"
                     v-for="(item, index) in shadowList"
@@ -98,9 +98,9 @@ export default {
         listCssText() {
             const translate = this.direction === 'vertical' ? 'translateY' : 'translateX'
             if(this.manual) {
-                return `transform:${translate}(${this.position + this.offset}px);`
+                return `transform:translateZ(0px) ${translate}(${this.position + this.offset}px);`
             } else {
-                return `transform:${translate}(${this.position}px);transition:transform ${this.transitionDuration/1000}s;`
+                return `transform:translateZ(0px) ${translate}(${this.position}px);`
             }
         },
     },
@@ -251,7 +251,6 @@ export default {
         },
     },
     mounted() {
-        console.log(this.hasSlot('item'))
         this.init()
     },
     beforeDestroy() {
@@ -267,14 +266,22 @@ export default {
     overflow: hidden;
     position: relative;
     user-select: none;
+    perspective: 800px;
+    will-change: transform;
     .list-wrapper {
         position: relative;
+        overflow: visible;
         &.circular {
-            transform: translateX(-100%);
+            transform: translateZ(0px) translateX(-100%);
         }
         .list {
+            will-change: transform;
             display: flex;
             flex-direction: row;
+            perspective: 0;
+            &.ani {
+                transition: transform 0.2s;
+            }
             .item {
                 display: block;
                 position: relative;

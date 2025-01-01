@@ -10,6 +10,14 @@
             :rpx-height="400"
         />
         <Swiper
+            direction="horizontal"
+            :list="[0, 1, 2, 3]"
+            :circular="false"
+            @change="handleSwiperChange"
+            @tap="handleSwiperTap"
+            :rpx-height="400"
+        />
+        <Swiper
             direction="vertical"
             :list="['a', 'b', 'c']"
             circular
