@@ -5,16 +5,22 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const PxToViewport = require('postcss-px-to-viewport')
 
 module.exports = options => {
-    const { WEBPACK_SERVE, DOC } = options
+    const { WEBPACK_SERVE, DOC, NPM } = options
+    const output = {
+        path: path.resolve(__dirname, DOC ? '../../docs/swiper-vue2' : 'dist'),
+        filename: 'main.js',
+    }
+    if(NPM) {
+        output.library = '"@imnull/swiper-vue2'
+        output.libraryTarget = 'umd'
+        output.globalObject = 'this'
+    }
+
+    const entry = NPM ? './src/components/swiper/index.vue' : './src/index.ts'
     return {
         mode: WEBPACK_SERVE ? 'development' : 'production',
-        entry: './src/index.ts',
-        // 输出配置
-        output: {
-            path: path.resolve(__dirname, DOC ? '../../docs/swiper-vue2' : 'dist'),
-            filename: 'main.js',
-        },
-        // 模块规则
+        entry,
+        output,
         module: {
             rules: [
                 {

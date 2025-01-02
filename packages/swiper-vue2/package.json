@@ -6,13 +6,23 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --open",
-    "build:doc": "webpack --env DOC"
+    "build:doc": "webpack --env DOC",
+    "build": "webpack --env NPM",
+    "pub": "npm publish --registry=https://registry.npmjs.org --access public"
   },
-  "keywords": [],
+  "keywords": [
+    "vue",
+    "component",
+    "vue2",
+    "swiper"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@imnull/ui-core": "*",
+    "vue": "^2.7.16"
+  },
+  "peerDependencies": {
     "vue": "^2.7.16"
   },
   "devDependencies": {
