@@ -5,7 +5,6 @@
             direction="horizontal"
             :list="[0, 1, 2, 3]"
             circular
-            scroll-cross
             :autoplay="true"
             :current="current"
             :duration="5000"
@@ -34,7 +33,6 @@
             direction="vertical"
             :list="['a', 'b', 'c', 'd']"
             circular
-            scroll-cross
             @change="handleSwiperChange"
             @tap="handleSwiperTap"
             :rpx-height="400"
@@ -76,9 +74,9 @@ h1 {
     color: blue;
 }
 .root-wrapper {
-    width: 120vw;
-    min-height: 120vh;
-    border: 3px solid blue;
+    // width: 120vw;
+    // min-height: 120vh;
+    // border: 3px solid blue;
 }
 .btns {
     padding-bottom: 20rpx;
