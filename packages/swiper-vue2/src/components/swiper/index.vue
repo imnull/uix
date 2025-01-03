@@ -368,6 +368,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .swiper-wrapper {
+    flex-grow: 0;
+    flex-shrink: 0;
     width: 100vw;
     height: 100vw;
     box-sizing: border-box;
