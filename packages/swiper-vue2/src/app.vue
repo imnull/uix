@@ -1,13 +1,14 @@
 <template>
-    <div>
+    <div class="root-wrapper">
         <h1>Swiper VUE2</h1>
         <Swiper
             direction="horizontal"
             :list="[0, 1, 2, 3]"
             circular
+            scroll-cross
             :autoplay="true"
             :current="current"
-            :duration="2000"
+            :duration="5000"
             @change="handleSwiperChange"
             @tap="handleSwiperTap"
             :rpx-height="400"
@@ -33,6 +34,7 @@
             direction="vertical"
             :list="['a', 'b', 'c', 'd']"
             circular
+            scroll-cross
             @change="handleSwiperChange"
             @tap="handleSwiperTap"
             :rpx-height="400"
@@ -72,6 +74,11 @@ body {
 }
 h1 {
     color: blue;
+}
+.root-wrapper {
+    width: 120vw;
+    min-height: 120vh;
+    border: 3px solid blue;
 }
 .btns {
     padding-bottom: 20rpx;

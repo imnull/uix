@@ -1,5 +1,5 @@
 <template>
-    <div class="swiper-wrapper" :style="wrapperCssText">
+    <div ref="root" class="swiper-wrapper" :style="wrapperCssText">
         <div ref="wrapper" class="swiper-wrapper-container">
             <div
                 :class="['list-wrapper', direction, { circular }]"
@@ -53,6 +53,10 @@ export default {
         SwiperDots,
     },
     props: {
+        scrollCross: {
+            type: Boolean,
+            default: false,
+        },
         /**
          * 翻页方向
          * - horizontal 水平方向
@@ -194,8 +198,8 @@ export default {
     },
     methods: {
         initRef() {
-            const { wrapper, list } = this.$refs
-            if(!wrapper || !list) {
+            const { root, wrapper, list } = this.$refs
+            if(!root || !wrapper || !list) {
                 return false
             }
             const { width, height } = wrapper.getBoundingClientRect()
@@ -238,9 +242,56 @@ export default {
         initHandler() {
             const size = this.size
             const { wrapper } = this.$refs
+            const parent = this.findScrollParent()
+
+            const scrollElement = (options) => {
+                if(!parent || !options) {
+                    return
+                }
+                if(typeof parent.scroll === 'function') {
+                    parent.scroll(options)
+                } else {
+                    const left = options.left || parent.scrollLeft || 0
+                    const top = options.top || parent.scrollTop || 0
+                    parent.scrollLeft = left
+                    parent.scrollTop = top
+                }
+                
+            }
+
+            const snapParentScroll = () => {
+                if(!parent) {
+                    return {
+                        left: 0,
+                        top: 0,
+                    }
+                }
+                return {
+                    left: parent.scrollLeft,
+                    top: parent.scrollTop,
+                }
+            }
+
+            let parentScroll = snapParentScroll()
+            
+            const parentScrollTo = (offset) => {
+                if(!parent || isNaN(offset)) {
+                    return
+                }
+
+                const options = this.direction === 'vertical' ? {
+                    left: parentScroll.left + offset,
+                    top: parentScroll.top,
+                } : {
+                    left: parentScroll.left,
+                    top: parentScroll.top + offset,
+                }
+                scrollElement(options)
+            }
             const handler = initGestureEvents(wrapper, {
                 onStart: () => {
                     this.manual = true
+                    parentScroll = snapParentScroll()
                     this.stop()
                 },
                 onEnd: () => {
@@ -263,6 +314,8 @@ export default {
                 },
                 onMove: (point) => {
                     const v = this.direction === 'vertical' ? point.y : point.x
+                    const s = -(this.direction === 'vertical' ? point.x : point.y)
+                    parentScrollTo(s)
                     this.offset = calDampingOffset(v, size, this.offsetLimit, this.threshold, this.damping)
                 }
             })
@@ -276,12 +329,39 @@ export default {
         hasSlot(name) {
             return !!name && (!!this.$slots[name] || !!this.$scopedSlots[name])
         },
-        
         getStepIndex(step) {
             const nextIndex = this.circular
                 ? (this.list.length + this.currentIndex + step) % this.list.length
                 : Math.max(0, Math.min(this.list.length - 1, this.currentIndex + step))
             return nextIndex
+        },
+        findScrollParent() {
+            if(!this.scrollCross) {
+                return null
+            }
+            const { root } = this.$refs
+            if(!root) {
+                return null
+            }
+            const direction = this.direction
+            let el = root.parentNode
+            const scrollName = direction === 'vertical' ? 'scrollWidth' : 'scrollHeight'
+            const sizeName = direction === 'vertical' ? 'width' : 'height'
+            while(el && el.nodeType === 1) {
+                if(el.nodeName === 'BODY') {
+                    return document.documentElement || el
+                }
+                const scrollSize = el[scrollName]
+                const { [sizeName]: size } = el.getBoundingClientRect()
+                if(size < scrollSize) {
+                    const css = window.getComputedStyle(el)
+                    if(css.overflow === 'auto' || css.overflow === 'scroll') {
+                        return el
+                    }
+                }
+                el = el.parentNode
+            }
+            return null
         },
         animateGo(step) {
             const currentIndex = this.getStepIndex(step)
