@@ -16,7 +16,7 @@ module.exports = options => {
         output.globalObject = 'this'
     }
 
-    const entry = NPM ? './src/components/swiper/index.vue' : './src/index.ts'
+    const entry = NPM ? './src/components/index.ts' : './src/index.ts'
     return {
         mode: WEBPACK_SERVE ? 'development' : 'production',
         entry,
