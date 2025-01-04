@@ -10,7 +10,16 @@
             :duration="5000"
             @change="handleSwiperChange"
             @tap="handleSwiperTap"
-            :rpx-height="400"
+            :rpx-height="600"
+        />
+        <Swiper
+            direction="vertical"
+            :list="['a', 'b', 'c', 'd']"
+            circular
+            @change="handleSwiperChange"
+            @tap="handleSwiperTap"
+            :rpx-height="300"
+            :current="current"
         />
         <Swiper
             direction="horizontal"
@@ -18,7 +27,7 @@
             :circular="false"
             @change="handleSwiperChange"
             @tap="handleSwiperTap"
-            :rpx-height="400"
+            :rpx-height="800"
             :current="current"
         >
             <template slot="dots" slot-scope="dots">
@@ -29,15 +38,6 @@
                 </div>
             </template>
         </Swiper>
-        <Swiper
-            direction="vertical"
-            :list="['a', 'b', 'c', 'd']"
-            circular
-            @change="handleSwiperChange"
-            @tap="handleSwiperTap"
-            :rpx-height="400"
-            :current="current"
-        />
     </div>
 </template>
 <script lang="js">

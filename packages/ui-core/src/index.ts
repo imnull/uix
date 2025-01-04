@@ -3,11 +3,33 @@ import {
     createEventBinder,
     setEventSilence,
     TPoint,
+    TOffset,
+    TDiredtion,
+    setEventStop,
 } from './utils'
+
+const calAngel = (p: TPoint, o: TPoint) => {
+    const x = p.x - o.x
+    const y = p.y - o.y
+    const a = Math.atan2(y, x)
+    return a
+}
+
+const getDirection = (p: TPoint, o: TPoint): TDiredtion => {
+    const x = Math.abs(p.x - o.x)
+    const y = Math.abs(p.y - o.y)
+    if(x === 0 && y === 0) {
+        return 0
+    } else {
+        return x > y ? 1 : 2
+    }
+}
+
+const DEG = Math.PI / 180
 
 export const initGestureEvents = (element: HTMLElement | string, options: {
     onStart: () => void;
-    onMove: (p: TPoint) => void;
+    onMove: (p: TOffset) => void;
     onEnd: () => void;
 }) => {
     const el = typeof element === 'string' ? document.querySelector(element) : element
@@ -21,14 +43,16 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
     } = options
     let point: TPoint | null = null
     let locked = false
+    let d: TDiredtion = 0
     const pointerdown = createEventBinder(el, 'pointerdown', e => {
-        setEventSilence(e)
+        setEventStop(e)
         if(locked) {
             return
         }
         if(typeof onStart === 'function') {
             onStart()
         }
+        d = 0
         point = getEventPoint(e)
         pointermove.attach()
         pointerup.attach()
@@ -43,17 +67,23 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         if(!p) {
             return
         }
-        const x = p.x - point.x
-        const y = p.y - point.y
-        const offset: TPoint = { x, y }
-        if(typeof onMove === 'function') {
-            onMove(offset)
+        if(d === 0) {
+            d = getDirection(p, point)
+        }
+        if(d !== 0) {
+            const x = p.x - point.x
+            const y = p.y - point.y
+            const offset: TOffset = { x, y, d }
+            if(typeof onMove === 'function') {
+                onMove(offset)
+            }
         }
     })
 
     const pointerup = createEventBinder(document, 'pointerup', e => {
         setEventSilence(e)
         point = null
+        d = 0
         pointermove.detache()
         pointerup.detache()
         if(typeof onEnd === 'function') {
@@ -72,10 +102,14 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
             pointerdown.attach()
             contextmenu.attach()
         },
-        dispose: () => {
-            pointerdown.detache()
+        release: () => {
+            point = null
             pointermove.detache()
             pointerup.detache()
+        },
+        dispose: () => {
+            R.release()
+            pointerdown.detache()
             contextmenu.detache()
         }
     }

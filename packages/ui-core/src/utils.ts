@@ -1,4 +1,12 @@
 export type TPoint = { x: number; y: number; }
+/**
+ * 方向
+ * - 0: 没有移动，无方向
+ * - 1: 水平方向
+ * - 2: 垂直方向
+ */
+export type TDiredtion = 0 | 1 | 2
+export type TOffset = TPoint & { d: TDiredtion }
 export type TEventNames = 'pointerdown' | 'pointermove' | 'pointerup' | 'contextmenu'
 
 export const isTouchable = () => {
@@ -69,6 +77,12 @@ export const createEventBinder = (element: Element | Document | Window, name: TE
         }
     }
     return R
+}
+
+export const setEventStop = (e: unknown) => {
+    if(e instanceof Event) {
+        e.stopPropagation()
+    }
 }
 
 export const setEventSilence = (e: unknown) => {
