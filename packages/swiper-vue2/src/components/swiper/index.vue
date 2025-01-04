@@ -236,10 +236,11 @@ export default {
             }
         },
         initHandler() {
+            this.destory()
             const size = this.size
             const { wrapper } = this.$refs
-            const d = this.direction === 'vertical' ? 2 : 1
             const handler = initGestureEvents(wrapper, {
+                direction: this.direction === 'vertical' ? 2 : 1,
                 onStart: () => {
                     this.manual = true
                     this.stop()
@@ -263,12 +264,6 @@ export default {
                     }
                 },
                 onMove: (offset) => {
-                    if(offset.d !== d) {
-                        handler.release()
-                        this.manual = false
-                        this.play()
-                        return
-                    }
                     const v = this.direction === 'vertical' ? offset.y : offset.x
                     this.offset = calDampingOffset(v, size, this.offsetLimit, this.threshold, this.damping)
                 }

@@ -1,6 +1,6 @@
 {
   "name": "@imnull/swiper-vue2",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "",
   "main": "dist/main.js",
   "scripts": {
@@ -19,11 +19,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@imnull/ui-core": "^1.0.0",
+    "@imnull/ui-core": "^1.2.0",
     "vue": "^2.7.16"
   },
   "peerDependencies": {
-    "@imnull/ui-core": "^1.0.0",
+    "@imnull/ui-core": "^1.2.0",
     "vue": "^2.7.16"
   },
   "devDependencies": {

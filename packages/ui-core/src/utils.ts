@@ -6,7 +6,6 @@ export type TPoint = { x: number; y: number; }
  * - 2: 垂直方向
  */
 export type TDiredtion = 0 | 1 | 2
-export type TOffset = TPoint & { d: TDiredtion }
 export type TEventNames = 'pointerdown' | 'pointermove' | 'pointerup' | 'contextmenu'
 
 export const isTouchable = () => {

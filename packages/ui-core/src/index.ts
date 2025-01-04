@@ -3,17 +3,9 @@ import {
     createEventBinder,
     setEventSilence,
     TPoint,
-    TOffset,
     TDiredtion,
     setEventStop,
 } from './utils'
-
-const calAngel = (p: TPoint, o: TPoint) => {
-    const x = p.x - o.x
-    const y = p.y - o.y
-    const a = Math.atan2(y, x)
-    return a
-}
 
 const getDirection = (p: TPoint, o: TPoint): TDiredtion => {
     const x = Math.abs(p.x - o.x)
@@ -28,9 +20,10 @@ const getDirection = (p: TPoint, o: TPoint): TDiredtion => {
 const DEG = Math.PI / 180
 
 export const initGestureEvents = (element: HTMLElement | string, options: {
-    onStart: () => void;
-    onMove: (p: TOffset) => void;
-    onEnd: () => void;
+    direction?: TDiredtion;
+    onStart?: () => void;
+    onMove?: (p: TPoint) => void;
+    onEnd?: () => void;
 }) => {
     const el = typeof element === 'string' ? document.querySelector(element) : element
     if(!el) {
@@ -40,6 +33,7 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         onStart,
         onMove,
         onEnd,
+        direction = 0,
     } = options
     let point: TPoint | null = null
     let locked = false
@@ -59,7 +53,6 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
     })
 
     const pointermove = createEventBinder(document, 'pointermove', e => {
-        setEventSilence(e)
         if(!point) {
             return
         }
@@ -71,17 +64,20 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
             d = getDirection(p, point)
         }
         if(d !== 0) {
-            const x = p.x - point.x
-            const y = p.y - point.y
-            const offset: TOffset = { x, y, d }
-            if(typeof onMove === 'function') {
-                onMove(offset)
+            if(direction === 0 || d === direction) {
+                setEventSilence(e)
+                const x = p.x - point.x
+                const y = p.y - point.y
+                const offset: TPoint = { x, y }
+                if(typeof onMove === 'function') {
+                    onMove(offset)
+                }
             }
         }
     })
 
     const pointerup = createEventBinder(document, 'pointerup', e => {
-        setEventSilence(e)
+        setEventStop(e)
         point = null
         d = 0
         pointermove.detache()
