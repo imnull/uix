@@ -9,9 +9,9 @@
             <template slot="loading" slot-scope="ui">
                 <Loading v-bind="ui" />
             </template>
-            <div class="desc">-- 下拉刷新 --</div>
+            <!-- <div class="desc">-- 下拉刷新 --</div> -->
             <h1 v-for="(item, index) in list" :key="index">[{{ index + 1 }}]{{ item }}</h1>
-            <div class="desc">-- 上拉翻页 --</div>
+            <!-- <div class="desc">-- 上拉翻页 --</div> -->
         </ListView>
     </div>
 </template>

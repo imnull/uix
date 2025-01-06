@@ -1,6 +1,6 @@
 <template>
     <div :class="['elestic-wrapper', { reverse: progress >= 1 }]" :style="wrapperCssText">
-        <div class="text">{{ text }} [{{ position }}]</div>
+        <div class="text" :style="textCssText">{{ text }} [{{ position }}]</div>
     </div>
 </template>
 <script lang="js">
@@ -28,6 +28,9 @@ export default {
             const val = Math.min(1, Math.max(0, this.progress))
             const height = this.height * val
             return `height:${height}px;opacity:${val};`
+        },
+        textCssText() {
+            return `transform:scale(${this.progress});`
         }
     }
 }
@@ -36,7 +39,7 @@ export default {
 .elestic-wrapper {
     width: 100%;
     box-sizing: border-box;
-    background-color: transparent;
+    background-color: #ccc;
     display: flex;
     flex-direction: column;
     align-items: center;

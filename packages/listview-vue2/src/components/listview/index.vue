@@ -115,9 +115,13 @@ export default {
                 return
             }
             let scrollHeight = root.scrollHeight
+            let isOnEdge = false
             const handler = initGestureEvents(root, {
                 direction: 2,
                 trigger: (p) => {
+                    if(!isOnEdge) {
+                        return false
+                    }
                     if(this.useLoading) {
                         return false
                     }
@@ -128,11 +132,11 @@ export default {
                     }
                 },
                 onStart: () => {
+                    isOnEdge = root.scrollTop <= 0 || root.clientHeight + root.scrollTop >= scrollHeight
                     scrollHeight = root.scrollHeight
                     this.manual = true
                 },
                 onMove: (e) => {
-                    console.log(e.y)
                     this.elastic = e.y
                 },
                 onEnd: () => {
