@@ -7,7 +7,7 @@
             >
                 <div
                     ref="list"
-                    :class="['list', { ani: !manual }]"
+                    class="list"
                     :style="listCssText"
                 >
                     <div
@@ -285,11 +285,13 @@ export default {
             return nextIndex
         },
         animateGo(step) {
+            // const { list } = this.$refs
             const currentIndex = this.getStepIndex(step)
             this.oldCureentIndex = this.currentIndex
             this.currentIndex = currentIndex
             const size = this.size
             const start = this.position + this.offset
+            // const translate = this.direction === 'vertical' ? 'translateY' : 'translateX'
             let end = start
             if(this.circular) {
                 const sign = -Math.sign(step)
@@ -304,8 +306,10 @@ export default {
                 duration: this.transitionDuration,
                 onProgress: params => {
                     this.position = distande * params.progress + start
+                    // list.style.cssText = `${translate}(${distande * params.progress + start}px);`
                 },
                 onEnd: () => {
+                    this.position = distande + start
                     if(this.circular) {
                         this.manual = true
                         this.position = 0
@@ -377,7 +381,6 @@ export default {
     overflow: hidden;
     position: relative;
     user-select: none;
-    perspective: 800px;
     will-change: transform;
     .swiper-wrapper-container {
         position: relative;
@@ -386,7 +389,7 @@ export default {
         position: relative;
         overflow: visible;
         &.circular {
-            transform: translateZ(0px) translateX(-100%);
+            transform: translateX(-100%);
         }
         .list {
             will-change: transform;
