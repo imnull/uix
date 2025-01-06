@@ -5,7 +5,7 @@
                 <slot v-if="useLoading" name="loading" :height="elasticSize" position="start" />
                 <slot v-else name="elastic" :progress="Math.abs(elasticRuntime) / elasticSize" :height="elasticSize" position="start" />
             </div>
-            <div ref="list" class="list" :style="listCssText">
+            <div class="list" :style="listCssText">
                 <slot />
             </div>
             <div v-if="useLoadMore" :class="['elastic', 'down']" :style="elasticDownCssText">
@@ -110,30 +110,31 @@ export default {
     
     methods: {
         init() {
-            const { root, list } = this.$refs
+            const { root } = this.$refs
             if(!root) {
                 return
             }
             let scrollHeight = root.scrollHeight
-            let isOnEdge = false
+            let isOnEdgeStart = false
+            let isOnEdgeEnd = false
             const handler = initGestureEvents(root, {
                 direction: 2,
                 trigger: (p) => {
-                    if(!isOnEdge) {
-                        return false
-                    }
                     if(this.useLoading) {
                         return false
                     }
                     if(p.y > 0) {
-                        return this.usePullDown && root.scrollTop <= 0
+                        isOnEdgeEnd = false
+                        return isOnEdgeStart && this.usePullDown && root.scrollTop <= 0
                     } else {
-                        return this.useLoadMore && root.clientHeight + root.scrollTop >= scrollHeight
+                        isOnEdgeStart = false
+                        return isOnEdgeEnd && this.useLoadMore && root.clientHeight + root.scrollTop >= root.scrollHeight
                     }
                 },
                 onStart: () => {
-                    isOnEdge = root.scrollTop <= 0 || root.clientHeight + root.scrollTop >= scrollHeight
                     scrollHeight = root.scrollHeight
+                    isOnEdgeStart = root.scrollTop <= 0
+                    isOnEdgeEnd = root.clientHeight + root.scrollTop >= scrollHeight
                     this.manual = true
                 },
                 onMove: (e) => {

@@ -1,6 +1,6 @@
 {
   "name": "@imnull/listview-vue2",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "main": "dist/main.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "start": "webpack serve --open",
     "build:doc": "webpack --env DOC",
     "build": "webpack --env NPM",
+    "postbuild": "npm run build:doc",
     "pub": "npm publish --registry=https://registry.npmjs.org --access public"
   },
   "keywords": [
