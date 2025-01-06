@@ -1,6 +1,6 @@
 {
   "name": "@imnull/swiper-vue2",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "",
   "main": "dist/main.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "start": "webpack serve --open",
     "build:doc": "webpack --env DOC",
     "build": "webpack --env NPM",
+    "postbuild": "npm run build:doc",
     "pub": "npm publish --registry=https://registry.npmjs.org --access public"
   },
   "keywords": [
@@ -19,11 +20,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@imnull/ui-core": "^1.3.2",
+    "@imnull/ui-core": "^1.4.0",
     "vue": "^2.7.16"
   },
   "peerDependencies": {
-    "@imnull/ui-core": "^1.3.2",
+    "@imnull/ui-core": "^1.4.0",
     "vue": "^2.7.16"
   },
   "devDependencies": {
