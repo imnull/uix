@@ -118,7 +118,8 @@ export default {
             let isOnEdgeStart = false
             let isOnEdgeEnd = false
             const handler = initGestureEvents(root, {
-                direction: 2,
+                // direction: 2,
+                // movePenetration: true,
                 trigger: (p) => {
                     if(this.useLoading) {
                         return false

@@ -28,7 +28,7 @@ const testTrigger = (p: TPoint, trigger?: (p: TPoint) => boolean) => {
 
 export const initGestureEvents = (element: HTMLElement | string, options: {
     direction?: TDiredtion;
-    
+    movePenetration?: boolean;
     trigger?: (p: TPoint) => boolean;
     onStart?: () => void;
     onMove?: (p: TPoint) => void;
@@ -44,6 +44,7 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         onEnd,
         trigger,
         direction = 0,
+        movePenetration = false,
     } = options
     let point: TPoint | null = null
     let locked = false
@@ -74,13 +75,17 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
             d = getDirection(p, point)
         }
         if(d !== 0) {
-            const x = p.x - point.x
-            const y = p.y - point.y
-            const offset: TPoint = { x, y }
-            if((direction === 0 || d === direction) && testTrigger(offset, trigger)) {
-                setEventSilence(e)
-                if(typeof onMove === 'function') {
-                    onMove(offset)
+            if((direction === 0 || d === direction)) {
+                const x = p.x - point.x
+                const y = p.y - point.y
+                const offset: TPoint = { x, y }
+                if(testTrigger(offset, trigger)) {
+                    if(typeof onMove === 'function') {
+                        onMove(offset)
+                    }
+                }
+                if(!movePenetration) {
+                    setEventSilence(e)
                 }
             }
         }

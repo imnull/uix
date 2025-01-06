@@ -53,7 +53,8 @@ export default {
             const { width } = tools.getBoundingClientRect()
             let x = 0
             const handler = initGestureEvents(root, {
-                direction: 1,
+                // direction: 1,
+                movePenetration: true,
                 onStart: () => {
                     x = this.x
                     this.manual = true
