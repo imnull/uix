@@ -28,6 +28,7 @@ const testTrigger = (p: TPoint, trigger?: (p: TPoint) => boolean) => {
 
 export const initGestureEvents = (element: HTMLElement | string, options: {
     direction?: TDiredtion;
+    
     trigger?: (p: TPoint) => boolean;
     onStart?: () => void;
     onMove?: (p: TPoint) => void;
@@ -48,7 +49,7 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
     let locked = false
     let d: TDiredtion = 0
     const pointerdown = createEventBinder(el, 'pointerdown', e => {
-        setEventStop(e)
+        // setEventStop(e)
         if(locked) {
             return
         }
@@ -86,7 +87,7 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
     })
 
     const pointerup = createEventBinder(document, 'pointerup', e => {
-        setEventStop(e)
+        // setEventStop(e)
         point = null
         d = 0
         pointermove.detache()

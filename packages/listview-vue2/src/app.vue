@@ -9,19 +9,23 @@
             <template slot="loading" slot-scope="ui">
                 <Loading v-bind="ui" />
             </template>
-            <!-- <div class="desc">-- 下拉刷新 --</div> -->
-            <h1 v-for="(item, index) in list" :key="index">[{{ index + 1 }}]{{ item }}</h1>
-            <!-- <div class="desc">-- 上拉翻页 --</div> -->
+             <Slider class="item" v-for="(item, index) in list" :key="index + item">
+                <h1>[{{ index + 1 }}]{{ item }}</h1>
+                <div slot="tools" class="tools">
+                    <button @click="handleRemove(index)">删除</button>
+                </div>
+             </Slider>
         </ListView>
     </div>
 </template>
 <script lang="js">
-import { ListView, Elastic, Loading } from './components/index'
+import { ListView, Elastic, Loading, Slider } from './components/index'
 export default {
     components: {
         ListView,
         Elastic,
         Loading,
+        Slider,
     },
     data() {
         return {
@@ -57,6 +61,9 @@ export default {
                     resolve()
                 }, 1000)
             })
+        },
+        handleRemove(index) {
+            this.list.splice(index, 1)
         }
     },
     mounted() {
@@ -101,5 +108,23 @@ h2 {
 .root-wrapper {
     box-sizing: border-box;
     width: 100%;
+    .item {
+        border-bottom: 1px solid #ccc;
+        &:first-of-type {
+            border-top: 1px solid #ccc;
+        }
+    }
+    .tools {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-self: stretch;
+        background-color: #f60;
+        button {
+            display: block;
+            width: 100rpx;
+            margin: 20rpx;
+        }
+    }
 }
 </style>
