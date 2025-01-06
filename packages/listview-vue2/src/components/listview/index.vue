@@ -51,7 +51,11 @@ export default {
         moveRatio: {
             type: Number,
             default: 4,
-        }
+        },
+        moveLock: {
+            type: Boolean,
+            default: true,
+        },
     },
     watch: {
         useLoading: {
@@ -118,8 +122,7 @@ export default {
             let isOnEdgeStart = false
             let isOnEdgeEnd = false
             const handler = initGestureEvents(root, {
-                // direction: 2,
-                // movePenetration: true,
+                direction: this.moveLock ? 2 : 0,
                 trigger: (p) => {
                     if(this.useLoading) {
                         return false

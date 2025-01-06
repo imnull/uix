@@ -40,6 +40,12 @@ export default {
             return `transform:translateX(${this.x}px);`
         },
     },
+    props: {
+        moveLock: {
+            type: Boolean,
+            default: true,
+        },
+    },
     data() {
         return {
             x: 0,
@@ -53,8 +59,8 @@ export default {
             const { width } = tools.getBoundingClientRect()
             let x = 0
             const handler = initGestureEvents(root, {
-                // direction: 1,
-                movePenetration: true,
+                direction: this.moveLock ? 1 : 0,
+                movePenetration: !this.moveLock,
                 onStart: () => {
                     x = this.x
                     this.manual = true
