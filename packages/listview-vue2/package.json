@@ -1,6 +1,6 @@
 {
-  "name": "@imnull/swiper-vue2",
-  "version": "1.5.2",
+  "name": "@imnull/listview-vue2",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/main.js",
   "scripts": {

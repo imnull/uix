@@ -19,8 +19,16 @@ const getDirection = (p: TPoint, o: TPoint): TDiredtion => {
 
 const DEG = Math.PI / 180
 
+const testTrigger = (p: TPoint, trigger?: (p: TPoint) => boolean) => {
+    if(typeof trigger !== 'function') {
+        return true
+    }
+    return trigger(p)
+}
+
 export const initGestureEvents = (element: HTMLElement | string, options: {
     direction?: TDiredtion;
+    trigger?: (p: TPoint) => boolean;
     onStart?: () => void;
     onMove?: (p: TPoint) => void;
     onEnd?: () => void;
@@ -33,6 +41,7 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         onStart,
         onMove,
         onEnd,
+        trigger,
         direction = 0,
     } = options
     let point: TPoint | null = null
@@ -64,11 +73,11 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
             d = getDirection(p, point)
         }
         if(d !== 0) {
-            if(direction === 0 || d === direction) {
+            const x = p.x - point.x
+            const y = p.y - point.y
+            const offset: TPoint = { x, y }
+            if((direction === 0 || d === direction) && testTrigger(offset, trigger)) {
                 setEventSilence(e)
-                const x = p.x - point.x
-                const y = p.y - point.y
-                const offset: TPoint = { x, y }
                 if(typeof onMove === 'function') {
                     onMove(offset)
                 }

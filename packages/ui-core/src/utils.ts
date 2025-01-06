@@ -88,7 +88,9 @@ export const setEventSilence = (e: unknown) => {
     if(e instanceof Event) {
         e.stopPropagation()
         e.stopImmediatePropagation()
-        e.preventDefault()
+        if(e.cancelable) {
+            e.preventDefault()
+        }
     }
 }
 
