@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import './index.scss'
+import style from './index.module.scss'
 
 export default defineComponent({
     props: {
@@ -17,7 +17,7 @@ export default defineComponent({
     render() {
         const { value, index } = this
         const content = JSON.stringify({ value, index }, null, 2)
-        return <div class={`item-demo ${index % 2 === 1 ? 'odd' : ''}`}>
+        return <div class={[style['item-demo'], index % 2 === 1 ? style.odd : '']}>
             <pre>{content}</pre>
         </div>
     },

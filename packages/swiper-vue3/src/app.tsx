@@ -56,5 +56,8 @@ export default defineComponent({
                 current={this.current}
             />
         </div>
+    },
+    mounted() {
+        console.log(1111111, 'mounted')
     }
 })

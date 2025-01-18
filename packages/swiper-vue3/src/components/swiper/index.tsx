@@ -1,8 +1,8 @@
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref, VNodeRef } from 'vue'
 import ItemDemo from '../swiper-item-demo'
 import SwiperDots from '../swiper-dots'
 import { initGestureEvents, calDampingOffset, rpxToVw, runAnimate } from '@imnull/ui-core'
-import './index.scss'
+import style from './index.module.scss'
 
 export default defineComponent({
     name: 'Swiper',
@@ -128,11 +128,11 @@ export default defineComponent({
     },
     methods: {
         initRef() {
-            const { root, wrapper, list } = this.$refs
+            const { root, wrapper, list } = this.refs
             if (!root || !wrapper || !list) {
                 return false
             }
-            const { width, height } = (wrapper as Element).getBoundingClientRect()
+            const { width, height } = wrapper.getBoundingClientRect()
             const size = this.direction === 'vertical' ? height : width
             this.size = size
             return true
@@ -172,7 +172,7 @@ export default defineComponent({
         initHandler() {
             this.destory()
             const size = this.size
-            const wrapper = this.$refs.wrapper as HTMLElement
+            const { wrapper } = this.refs
             const handler = initGestureEvents(wrapper, {
                 direction: this.direction === 'vertical' ? 2 : 1,
                 onStart: () => {
@@ -219,7 +219,6 @@ export default defineComponent({
             return nextIndex
         },
         animateGo(step: number) {
-            // const { list } = this.$refs
             const currentIndex = this.getStepIndex(step)
             this.oldCureentIndex = this.currentIndex
             this.currentIndex = currentIndex
@@ -335,23 +334,45 @@ export default defineComponent({
         const emitChange = (params: { value: any, index: number }) => {
             emit('change', params)
         }
+        
+        const refs = reactive<{
+            root: VNodeRef | undefined,
+            wrapper: VNodeRef | undefined,
+            list: VNodeRef | undefined,
+        }>({
+            root: undefined,
+            wrapper: undefined,
+            list: undefined,
+        })
+        
         return {
             emitTap,
             emitChange,
+            refs,
         }
     },
     render() {
 
-        return <div ref="root" class="swiper-wrapper" style={this.wrapperCssText}>
-            <div ref="wrapper" class="swiper-wrapper-container">
+        const setRoot = (el: any) => {
+            this.refs.root = el
+        }
+        const setWrapper = (el: any) => {
+            this.refs.wrapper = el
+        }
+        const setList = (el: any) => {
+            this.refs.list = el
+        }
+
+        return <div ref={setRoot} class={style['swiper-wrapper']} style={this.wrapperCssText}>
+            <div ref={setWrapper} class={style['swiper-wrapper-container']}>
                 <div
-                    class={`list-wrapper ${this.direction} ${this.circular ? 'circular' : ''}`}
+                    class={[style['list-wrapper'], style[this.direction], this.circular ? style['circular'] : '']}
                     style={this.boxSizeCssText}
                 >
-                    <div ref="list" class="list" style={this.listCssText}>
+                    <div ref={setList} class={style.list} style={this.listCssText}>
                         {
                             this.shadowList.map((item, index) => (
-                                <div class="item" style={this.boxSizeCssText} key={index}>{
+                                <div class={style.item}  style={this.boxSizeCssText} key={index}>{
                                     !this.$slots.item ? <ItemDemo value={item.value as any} index={item.index} /> : this.$slots.item({
                                         value: item.value,
                                         index: item.index,
@@ -362,7 +383,7 @@ export default defineComponent({
                     </div>
                 </div>
             </div>
-            <div class={`bottom-wrapper ${this.direction}`}>
+            <div class={[style['bottom-wrapper'], style[this.direction]]}>
                 {!this.$slots.dots ? <SwiperDots
                     count={this.list.length}
                     current={this.currentIndex}
