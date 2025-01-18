@@ -1,4 +1,5 @@
-export type TPoint = { x: number; y: number; }
+export type TVector = { x: number; y: number; }
+export type TVectorTime = TVector & { t: number }
 /**
  * 方向
  * - 0: 没有移动，无方向
@@ -46,16 +47,23 @@ export const getEventNames = (): Record<TEventNames, string> => {
     return { pointerdown, pointermove, pointerup, contextmenu }
 }
 
-export const getEventPoint = (e: unknown): TPoint | null => {
+export const getEventPoint = (e: unknown): TVectorTime | null => {
     if (e instanceof MouseEvent || (typeof PointerEvent === 'function' && e instanceof PointerEvent)) {
-        return { x: e.clientX, y: e.clientY }
+        return { x: e.clientX, y: e.clientY, t: e.timeStamp }
     } else if (e instanceof TouchEvent) {
         const touch = e.touches[0]
         if (touch) {
-            return { x: touch.clientX, y: touch.clientY }
+            return { x: touch.clientX, y: touch.clientY, t: e.timeStamp }
         }
     }
     return null
+}
+
+export const getEventTimeStamp = (e: unknown) => {
+    if(e instanceof Event) {
+        return e.timeStamp
+    }
+    return 0
 }
 
 export const createEventBinder = (element: Element | Document | Window, name: TEventNames, callback: (e: unknown) => void) => {
