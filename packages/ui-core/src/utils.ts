@@ -7,7 +7,7 @@ export type TVectorTime = TVector & { t: number }
  * - 2: 垂直方向
  */
 export type TDiredtion = 0 | 1 | 2
-export type TEventNames = 'pointerdown' | 'pointermove' | 'pointerup' | 'contextmenu'
+export type TEventNames = 'pointerdown' | 'pointermove' | 'pointerup' | 'contextmenu' | 'click'
 
 export const isTouchable = () => {
     return 'ontouchstart' in window && navigator.maxTouchPoints > 0
@@ -30,6 +30,7 @@ export const getEventNames = (): Record<TEventNames, string> => {
     let pointermove = 'mousemove'
     let pointerup = 'mouseup'
     const contextmenu = 'contextmenu'
+    const click = 'click'
     switch (eventType) {
         // case 'pointer': {
         //     pointerdown = 'pointerdown'
@@ -44,7 +45,7 @@ export const getEventNames = (): Record<TEventNames, string> => {
             break
         }
     }
-    return { pointerdown, pointermove, pointerup, contextmenu }
+    return { pointerdown, pointermove, pointerup, contextmenu, click }
 }
 
 export const getEventPoint = (e: unknown): TVectorTime | null => {
