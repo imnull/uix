@@ -59,11 +59,31 @@ export const getEventPoint = (e: unknown): TVectorTime | null => {
     return null
 }
 
+export const getEventPoints = (e: unknown): TVector[] => {
+    if (e instanceof MouseEvent || (typeof PointerEvent === 'function' && e instanceof PointerEvent)) {
+        return [{ x: e.clientX, y: e.clientY }]
+    } else if (e instanceof TouchEvent) {
+        const touches = Array.from(e.touches)
+        return touches.map(touch => ({ x: touch.clientX, y: touch.clientY }))
+    }
+    return []
+}
+
 export const getEventTimeStamp = (e: unknown) => {
     if(e instanceof Event) {
         return e.timeStamp
     }
     return 0
+}
+
+export const getPointsDistance = (points: TVector[]) => {
+    if(points.length < 2) {
+        return 0
+    }
+    const [a, b] = points
+    const x = b.x - a.x
+    const y = b.y - a.y
+    return Math.sqrt(x * x + y * y)
 }
 
 export const createEventBinder = (element: Element | Document | Window, name: TEventNames, callback: (e: unknown) => void) => {

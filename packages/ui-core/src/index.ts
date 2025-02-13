@@ -6,6 +6,8 @@ import {
     TDiredtion,
     TVectorTime,
     getEventTimeStamp,
+    getEventPoints,
+    getPointsDistance,
 } from './utils'
 
 const getDirection = (p: TVector, o: TVector): TDiredtion => {
@@ -48,9 +50,11 @@ const calSpeed = (points: TVectorTime[], endTime = 0): TVector => {
 export const initGestureEvents = (element: HTMLElement | string, options: {
     direction?: TDiredtion;
     movePenetration?: boolean;
+    useScale?: boolean;
     trigger?: (p: TVector) => boolean;
     onStart?: () => void;
     onMove?: (p: TVector) => void;
+    onScale?: (s: number) => void;
     onEnd?: (res: { start: TVector; end: TVector; offset: TVector; speed: TVector; startTime: number; endTime: number; }) => void;
 }) => {
     const el = typeof element === 'string' ? document.querySelector(element) : element
@@ -63,12 +67,15 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         onMove,
         onEnd,
         trigger,
+        onScale,
+        useScale = false,
         direction = 0,
         movePenetration = false,
     } = options
     let point: TVector | null = null
     let locked = false
     let d: TDiredtion = 0
+    let fingerDistance = 0
 
     const movePoints: TVectorTime[] = []
 
@@ -79,6 +86,7 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         if(locked) {
             return
         }
+        fingerDistance = getPointsDistance(getEventPoints(e))
         if(typeof onStart === 'function') {
             onStart()
         }
@@ -89,6 +97,14 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
     })
 
     const pointermove = createEventBinder(document, 'pointermove', e => {
+        if(useScale && fingerDistance > 0) {
+            if(typeof onScale === 'function') {
+                const distance = getPointsDistance(getEventPoints(e))
+                const scale = distance / fingerDistance
+                onScale(scale)
+            }
+            return
+        }
         if(!point) {
             return
         }
@@ -123,6 +139,8 @@ export const initGestureEvents = (element: HTMLElement | string, options: {
         const end = movePoints[movePoints.length - 1] || null
         point = null
         d = 0
+        fingerDistance = getPointsDistance(getEventPoints(e))
+
         pointermove.detache()
         pointerup.detache()
         if(typeof onEnd === 'function' && start && end) {
